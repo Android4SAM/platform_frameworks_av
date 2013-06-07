@@ -172,8 +172,13 @@ void SoftwareRenderer::render(
         size_t dst_y_size = buf->stride * buf->height;
         size_t dst_c_stride = ALIGN(buf->stride / 2, 16);
         size_t dst_c_size = dst_c_stride * buf->height / 2;
-        uint8_t *dst_v = dst_y + dst_y_size;
-        uint8_t *dst_u = dst_v + dst_c_size;
+	/* 
+	 * Change by embest
+	 * Atmel LCD HEO control support YCrCb
+	 * The orgin code is YUV, so we change it to YVU
+	 */
+        uint8_t *dst_u = dst_y + dst_y_size;
+        uint8_t *dst_v = dst_u + dst_c_size;
 
         for (int y = 0; y < mCropHeight; ++y) {
             memcpy(dst_y, src_y, mCropWidth);
@@ -205,8 +210,13 @@ void SoftwareRenderer::render(
         size_t dst_y_size = buf->stride * buf->height;
         size_t dst_c_stride = ALIGN(buf->stride / 2, 16);
         size_t dst_c_size = dst_c_stride * buf->height / 2;
-        uint8_t *dst_v = dst_y + dst_y_size;
-        uint8_t *dst_u = dst_v + dst_c_size;
+	/*
+	 * Change by embest
+	 * Atmel LCD HEO control support YCrCb
+	 * The orgin code is YUV, so we change it to YVU
+	 */
+        uint8_t *dst_u = dst_y + dst_y_size;
+        uint8_t *dst_v = dst_u + dst_c_size;
 
         for (int y = 0; y < mCropHeight; ++y) {
             memcpy(dst_y, src_y, mCropWidth);
