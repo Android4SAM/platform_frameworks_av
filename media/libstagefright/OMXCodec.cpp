@@ -1729,11 +1729,23 @@ status_t OMXCodec::allocateOutputBuffersFromNativeWindow() {
         return err;
     }
 
+    //If we use hantro hardware decoder, it will decoder data to YUYV format.
+    //we use HAL_PIXEL_FORMAT_YCbCr_422_I to represent YUYV and alloc buffer from gralloc
+    int halFormat;
+    if (!strncmp(mComponentName, "OMX.hantro.", 11)) {
+        if (def.format.video.eColorFormat != OMX_COLOR_FormatYCbYCr)
+            ALOGW("Warning: the output port eColorFormat is not OMX_COLOR_FormatYCbYCr."
+                  "This may caused video color abnormal or could not be play");
+        halFormat = HAL_PIXEL_FORMAT_YCbCr_422_I;
+    } else {
+        halFormat = def.format.video.eColorFormat;
+    }
+
     err = native_window_set_buffers_geometry(
             mNativeWindow.get(),
             def.format.video.nFrameWidth,
             def.format.video.nFrameHeight,
-            def.format.video.eColorFormat);
+            halFormat);
 
     if (err != 0) {
         ALOGE("native_window_set_buffers_geometry failed: %s (%d)",
