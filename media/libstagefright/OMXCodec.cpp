@@ -43,6 +43,9 @@
 #include <OMX_Component.h>
 
 #include "include/avc_utils.h"
+#include <ui/DisplayInfo.h>
+#include <gui/SurfaceComposerClient.h>
+#include <gui/ISurfaceComposer.h>
 
 namespace android {
 
@@ -1300,8 +1303,21 @@ status_t OMXCodec::setVideoOutputFormat(
         (((width + 15) & -16) * ((height + 15) & -16) * 3) / 2;  // YUV420
 #endif
 
-    video_def->nFrameWidth = width;
-    video_def->nFrameHeight = height;
+    //If use hantro hardware deocder, we will set the output buffer w/h to lcd display w/h
+    //this is becuase hantro decoder will resize the output video to nFrameWidth/nFrameHeight by hardware(pp)
+    //so we don't to resize it by software if the original video size is not equal to lcd display w/h
+    sp<IBinder> display(SurfaceComposerClient::getBuiltInDisplay(
+                    ISurfaceComposer::eDisplayIdMain));
+    DisplayInfo info;
+    SurfaceComposerClient::getDisplayInfo(display, &info);
+
+    if (!strncmp(mComponentName, "OMX.hantro.", 11)) {
+        video_def->nFrameWidth = info.w;
+        video_def->nFrameHeight = info.h;
+    } else {
+        video_def->nFrameWidth = width;
+        video_def->nFrameHeight = height;
+    }
 
     err = mOMX->setParameter(
             mNode, OMX_IndexParamPortDefinition, &def, sizeof(def));
