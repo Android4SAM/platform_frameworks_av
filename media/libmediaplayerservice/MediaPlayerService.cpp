@@ -1443,7 +1443,6 @@ status_t MediaPlayerService::AudioOutput::open(
     // Check argument "bufferCount" against the mininum buffer count
     if (bufferCount < mMinBufferCount) {
         ALOGD("bufferCount (%d) is too small and increased to %d", bufferCount, mMinBufferCount);
-        bufferCount = mMinBufferCount;
 
     }
     ALOGV("open(%u, %d, 0x%x, 0x%x, %d, %d 0x%x)", sampleRate, channelCount, channelMask,

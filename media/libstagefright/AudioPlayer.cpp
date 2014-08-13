@@ -173,7 +173,7 @@ status_t AudioPlayer::start(bool sourceAlreadyStarted) {
 
         status_t err = mAudioSink->open(
                 mSampleRate, numChannels, channelMask, audioFormat,
-                DEFAULT_AUDIOSINK_BUFFERCOUNT,
+                1,
                 &AudioPlayer::AudioSinkCallback,
                 this,
                 (audio_output_flags_t)flags,
